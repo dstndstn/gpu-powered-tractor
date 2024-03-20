@@ -7,7 +7,7 @@ Just a place to share files and docs about trying to get the Tractor working eff
 This runs a single galaxy (this one: https://www.legacysurvey.org/viewer/?ra=185.9747&dec=19.4817&layer=ls-dr10&zoom=16).
 It reads input from a pickle file, `/pscratch/sd/d/dstn/legacypipe-demo/oneblob-inputs-custom-185981p19474-10`
 
-# On Perlmutter...
+### On Perlmutter...
 
 ```
 module use /global/common/software/desi/users/dstn/modulefiles/
