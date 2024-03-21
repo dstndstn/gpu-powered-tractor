@@ -4,7 +4,9 @@ import pickle
 from time import time
 
 if __name__ == '__main__':
-    xstr = open('/pscratch/sd/d/dstn/legacypipe-demo/oneblob-inputs-custom-185981p19474-10', 'rb').read()
+    #infn = '/pscratch/sd/d/dstn/legacypipe-demo/oneblob-inputs-custom-185981p19474-10'
+    infn = 'oneblob-inputs-custom-185981p19474-10'
+    xstr = open(infn, 'rb').read()
     X = pickle.loads(xstr)
 
     (nblob, iblob, Isrcs, brickwcs, bx0, by0, blobw, blobh, blobmask, timargs,
