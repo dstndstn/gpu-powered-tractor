@@ -2,8 +2,8 @@ import multiprocessing as mp
 import time
 
 def gpu_manager(pipes):
-    #print('gpu_manager: got pipes', pipes)
 
+    # If you wanted to batch up requests before running them, could do something like:
     # batch = []
     # while True:
     #     for r in mp.connection.wait(pipes):

@@ -5,8 +5,11 @@ import pickle
 from time import time
 
 def main():
+    # Set up a magic multiprocessing.Pool that has mathpipes set up.
     pool = create_pool(4)
+    print('Created pool', pool)
 
+    # All standard code in here...
     infn = 'oneblob-inputs-custom-185981p19474-10'
     xstr = open(infn, 'rb').read()
     X = pickle.loads(xstr)
@@ -35,16 +38,13 @@ def main():
     R = res[0]
     print('Measured %i sources, types %s' % (len(R), [str(type(s)) for s in R.sources]))
 
-    # from tractor_math import do_work
-    # print('Sending work...')
-    # r = do_work(10)
-    # print('Got', r)
+    # End of standard code -- print mathpipe stats!
+    
     from mathpipe import tractor_math
     print('GPU work pipe stats:')
     stats = tractor_math.get_pipe_stats()
     for k in ['pickle_objs', 'pickle_megabytes', 'pickle_cputime',
               'unpickle_objs', 'unpickle_megabytes', 'unpickle_cputime']:
-        #'pickle_megabytes', 'unpickle_megabytes'
         v = stats[k]
         if type(v) is int:
             print('  ', k, v)
