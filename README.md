@@ -13,11 +13,15 @@ It reads input from a pickle file, `/pscratch/sd/d/dstn/legacypipe-demo/oneblob-
 module use /global/common/software/desi/users/dstn/modulefiles/
 module load tractor/perlmutter
 
-git clone https://github.com/dstndstn/tractor.git tractor
-cd tractor
+git clone https://github.com/dstndstn/tractor.git tractor-git
+cd tractor-git
+git checkout factored
 python setup.py build_ext --inplace
-export PYTHONPATH=$(pwd):${PYTHONPATH}
 cd ..
+ln -s tractor-git/tractor .
+
+git clone https://github.com/legacysurvey/legacypipe.git legacypipe-git
+ln -s legacypipe-git/py/legacypipe .
 
 python -m cProfile -o oneblob.pro run-one-blob.py
 ```
