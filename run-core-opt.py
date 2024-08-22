@@ -26,12 +26,8 @@ from time import time
 
 if __name__ == '__main__':
     lvl = logging.INFO
-    #lvl = logging.DEBUG
     logging.basicConfig(level=lvl, format='%(message)s', stream=sys.stdout)
-    #logging.getLogger('tractor.engine').setLevel(lvl + 10)
 
-
-    #infn = '/pscratch/sd/d/dstn/legacypipe-demo/oneblob-inputs-custom-185981p19474-10'
     infn = 'oneblob-inputs-custom-185981p19474-10'
     xstr = open(infn, 'rb').read()
 
@@ -42,7 +38,7 @@ if __name__ == '__main__':
     #opt2.ps = PlotSequence('gpu')
     #opt2.ps_orig = PlotSequence('orig')
     for tag, opt, Ncopies in [
-            ('gpufriendly', opt2, 10),
+            ('gpufriendly', opt2, 100),
             ('factored', opt1, 1),
     ]:
         print()
@@ -56,30 +52,29 @@ if __name__ == '__main__':
          large_galaxies_force_pointsource, less_masking, frozen_galaxies) = X
 
         timargs = timargs * Ncopies
+
+        from legacypipe.survey import LegacyEllipseWithPriors
+        from tractor import DevGalaxy, Catalog
         print('Sources:', srcs)
-        
-        #ps = PlotSequence('plots-%s' % tag)
-        #plots = True
+        # Modify the first source to be a DevGalaxy (not PointSource)
+        src = srcs[0]
+        shape = LegacyEllipseWithPriors(-1., 0., 0.)
+        dev = DevGalaxy(src.getPosition(), src.getBrightness(), shape).copy()
+        srcs = [dev]
+        print('Modified Sources:', srcs)
 
         print('%i sources, %i images, blob size %i x %i' % (len(Isrcs), len(timargs), blobw, blobh))
-        print(len(xstr), 'bytes of input')
-
-        t0 = time()
-        #R = one_blob(X)
-        #print('Measured %i sources, types %s' % (len(R), [str(type(s)) for s in R.sources]))
 
         blobwcs = brickwcs.get_subimage(bx0, by0, blobw, blobh)
-
         ob = OneBlob(nblob, blobwcs, blobmask, timargs, srcs, bands,
                      plots, ps, use_ceres, refmap,
                      large_galaxies_force_pointsource,
                      less_masking, frozen_galaxies)
-        ob.trargs.update(optimizer=opt)
-        B = ob.init_table(Isrcs)
-        B = ob.run(B, reoptimize=reoptimize, iterative_detection=iterative)
-        ob.finalize_table(B, bx0, by0)
+
+        t0 = time()
+
+        tr = Tractor(ob.tims, Catalog(*srcs), optimizer=opt)
+        X = tr.optimizer.getLinearUpdateDirection(tr, shared_params=False)
+        print('X', X)
 
         print('Took', time()-t0, 'sec')
-        print('Measured %i source(s):' % len(B.sources))
-        for s in B.sources:
-            print('  ', s)
