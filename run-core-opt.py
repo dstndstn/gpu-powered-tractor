@@ -54,14 +54,14 @@ if __name__ == '__main__':
         timargs = timargs * Ncopies
 
         from legacypipe.survey import LegacyEllipseWithPriors
-        from tractor import DevGalaxy, Catalog
-        print('Sources:', srcs)
+        from tractor import DevGalaxy, Catalog, ModelMask
         # Modify the first source to be a DevGalaxy (not PointSource)
         src = srcs[0]
         shape = LegacyEllipseWithPriors(-1., 0., 0.)
-        dev = DevGalaxy(src.getPosition(), src.getBrightness(), shape).copy()
+        dev = DevGalaxy(src.getPosition(), src.getBrightness(), shape)
         srcs = [dev]
-        print('Modified Sources:', srcs)
+        src = srcs[0]
+        print('Modified Source:', src)
 
         print('%i sources, %i images, blob size %i x %i' % (len(Isrcs), len(timargs), blobw, blobh))
 
@@ -74,6 +74,9 @@ if __name__ == '__main__':
         t0 = time()
 
         tr = Tractor(ob.tims, Catalog(*srcs), optimizer=opt)
+        tr.freezeParam('images')
+        tr.setModelMasks([{src:ModelMask(0, 0, tim.shape[1], tim.shape[0])}
+                          for tim in ob.tims])
         X = tr.optimizer.getLinearUpdateDirection(tr, shared_params=False)
         print('X', X)
 
