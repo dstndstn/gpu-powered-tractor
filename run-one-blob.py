@@ -41,9 +41,9 @@ if __name__ == '__main__':
     opt2 = GPUFriendlyOptimizer()
     #opt2.ps = PlotSequence('gpu')
     #opt2.ps_orig = PlotSequence('orig')
-    for tag, opt, Ncopies in [
-            ('gpufriendly', opt2, 10),
-            ('factored', opt1, 1),
+    for tag, opt in [
+            ('gpufriendly', opt2),
+            ('factored', opt1),
     ]:
         print()
         print('Optimizing with', tag, type(opt))
@@ -55,9 +55,6 @@ if __name__ == '__main__':
          srcs, bands, plots, ps, reoptimize, iterative, use_ceres, refmap,
          large_galaxies_force_pointsource, less_masking, frozen_galaxies) = X
 
-        timargs = timargs * Ncopies
-        print('Sources:', srcs)
-        
         #ps = PlotSequence('plots-%s' % tag)
         #plots = True
 
