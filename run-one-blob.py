@@ -1,4 +1,8 @@
 import sys
+
+import matplotlib.pyplot as plt
+plt.rcParams["figure.figsize"] = (10,8)
+
 import logging
 #from legacypipe.oneblob import one_blob
 from legacypipe.oneblob import OneBlob
@@ -39,7 +43,7 @@ if __name__ == '__main__':
     opt1 = FactoredDenseOptimizer()
     #opt1.ps = PlotSequence('fac')
     opt2 = GPUFriendlyOptimizer()
-    #opt2.ps = PlotSequence('gpu')
+    opt2.ps = PlotSequence('gpu')
     #opt2.ps_orig = PlotSequence('orig')
     for tag, opt in [
             ('gpufriendly', opt2),
@@ -55,8 +59,10 @@ if __name__ == '__main__':
          srcs, bands, plots, ps, reoptimize, iterative, use_ceres, refmap,
          large_galaxies_force_pointsource, less_masking, frozen_galaxies) = X
 
-        #ps = PlotSequence('plots-%s' % tag)
-        #plots = True
+        iterative = False
+        
+        ps = PlotSequence('plots-%s' % tag)
+        plots = True
 
         print('%i sources, %i images, blob size %i x %i' % (len(Isrcs), len(timargs), blobw, blobh))
         print(len(xstr), 'bytes of input')
@@ -67,6 +73,8 @@ if __name__ == '__main__':
 
         blobwcs = brickwcs.get_subimage(bx0, by0, blobw, blobh)
 
+        print('Calling OneBlob with', tag)
+        
         ob = OneBlob(nblob, blobwcs, blobmask, timargs, srcs, bands,
                      plots, ps, use_ceres, refmap,
                      large_galaxies_force_pointsource,
