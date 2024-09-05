@@ -3,9 +3,11 @@ if __name__ == '__main__':
     from tractor.factored_optimizer import FactoredDenseOptimizer
     from tractor.factored_optimizer import GPUFriendlyOptimizer
     import numpy as np
+    from astrometry.util.plotutils import PlotSequence
     
     opt1 = FactoredDenseOptimizer()
     opt2 = GPUFriendlyOptimizer()
+    opt2.ps = PlotSequence('gpu')
 
     # Load image data from our saved pickle
     import pickle
