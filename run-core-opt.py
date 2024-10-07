@@ -9,6 +9,7 @@ from astrometry.util.plotutils import PlotSequence
 
 import pickle
 from time import time
+import cupy as cp
 
 # class MyOneBlob(OneBlob):
 #     def __init__(self, *args, **kwargs):
@@ -25,6 +26,12 @@ from time import time
 #         return tr
 
 if __name__ == '__main__':
+    nrep = 100
+    if len(sys.argv) > 1:
+        nrep = int(sys.argv[1])
+    t = time()
+    z = cp.zeros(2)
+    print ("Priming GPU - time = ", time()-t)
     lvl = logging.INFO
     logging.basicConfig(level=lvl, format='%(message)s', stream=sys.stdout)
 
@@ -38,8 +45,8 @@ if __name__ == '__main__':
     #opt2.ps = PlotSequence('gpu')
     #opt2.ps_orig = PlotSequence('orig')
     for tag, opt, Ncopies in [
-            ('gpufriendly', opt2, 100),
-            ('factored', opt1, 1),
+            ('gpufriendly', opt2, nrep),
+            ('factored', opt1, nrep),
     ]:
         print()
         print('Optimizing with', tag, type(opt))

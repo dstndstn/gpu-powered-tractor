@@ -58,6 +58,7 @@ if __name__ == '__main__':
 
     print('X1', X1)
     print('X2', X2)
+    X2 = X2.get()
 
     dst = np.sum(X1 * X2) / (np.sqrt(np.sum(X1**2)) * np.sqrt(np.sum(X2**2)))
     print('Similarity:', dst)

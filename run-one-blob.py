@@ -62,7 +62,7 @@ if __name__ == '__main__':
         iterative = False
         
         ps = PlotSequence('plots-%s' % tag)
-        plots = True
+        #plots = True
 
         print('%i sources, %i images, blob size %i x %i' % (len(Isrcs), len(timargs), blobw, blobh))
         print(len(xstr), 'bytes of input')
