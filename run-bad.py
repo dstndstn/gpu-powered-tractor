@@ -1,5 +1,6 @@
-
+import cupy
 import pickle
+
 #tr = pickle.load(open('bad.pickle','rb'))
 tr = pickle.load(open('bad2.pickle','rb'))
 tr.model_kwargs = {}
