@@ -2,7 +2,8 @@ import cupy
 import pickle
 
 #tr = pickle.load(open('bad.pickle','rb'))
-tr = pickle.load(open('bad2.pickle','rb'))
+#tr = pickle.load(open('bad2.pickle','rb'))
+tr = pickle.load(open('bad3.pickle','rb'))
 tr.model_kwargs = {}
 print('Got', tr)
 
@@ -30,8 +31,12 @@ g = fitsio.read('gpu-a-scaled.fits')
 c_A = c.copy()
 g_A = g.copy()
 
+c_planes = []
 for i in range(c.shape[2]):
-    print('CPU plane', i, ':', np.sum(c[:,:,i] != 0), 'non-zero')
+    nz = np.sum(c[:,:,i] != 0)
+    print('CPU plane', i, ':', nz, 'non-zero')
+    if nz > 0:
+        c_planes.append(i)
 
 c[c == 0] = np.nan
 g[g == 0] = np.nan
@@ -40,7 +45,10 @@ print('CPU:', c.shape)
 print('GPU:', g.shape)
 
 
-for ii,(ic,ig) in enumerate([(0,0), (1,1), (5,2), (6,3)]):
+#for ii,(ic,ig) in enumerate([(0,0), (1,1), (5,2), (6,3)]):
+for ii,ic in enumerate(c_planes):
+    ig = ii
+    
     i,j = np.nonzero(np.isfinite(c[:,:,ic]))
     i0 = min(i)
     j0 = min(j)
