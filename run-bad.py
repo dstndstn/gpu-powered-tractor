@@ -100,8 +100,8 @@ gj1 = max(j)
 print('Nonzero region of A: CPU: %i x %i' % (ci1-ci0, cj1-cj0))
 print('Nonzero region of A: GPU: %i x %i' % (gi1-gi0, gj1-gj0))
 
-cgood = c[ci0:ci1, cj0:cj1]
-ggood = g[gi0:gi1, gj0:gj1]
+cgood = c[ci0:ci1+1, cj0:cj1+1]
+ggood = g[gi0:gi1+1, gj0:gj1+1]
 plt.clf()
 plt.subplot(1,3,1)
 plt.imshow(cgood, interpolation='nearest', origin='lower')
