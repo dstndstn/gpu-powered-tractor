@@ -43,11 +43,11 @@ if __name__ == '__main__':
     opt1 = FactoredDenseOptimizer()
     #opt1.ps = PlotSequence('fac')
     opt2 = GPUFriendlyOptimizer()
-    opt2.ps = PlotSequence('gpu')
+    #opt2.ps = PlotSequence('gpu')
     #opt2.ps_orig = PlotSequence('orig')
     for tag, opt in [
             ('gpufriendly', opt2),
-            ('factored', opt1),
+            #('factored', opt1),
     ]:
         print()
         print('Optimizing with', tag, type(opt))
