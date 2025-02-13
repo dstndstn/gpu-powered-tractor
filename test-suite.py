@@ -5,6 +5,8 @@ import pylab as plt
 import fitsio
 from tractor.brightness import NanoMaggies
 
+from data_logger import log_data, data_log
+
 tr = pickle.load(open('bad2.pickle','rb'))
 tr.model_kwargs = {}
 print('Got', tr)
@@ -26,7 +28,61 @@ from astrometry.util.plotutils import PlotSequence
 opt.ps = PlotSequence('bad2')
 opt.getSingleImageUpdateDirections(tr, shared_params=False)
 
+print('Data log:', [k for k,v in data_log])
 
+data_log = dict(data_log)
+mod0_gpu = data_log['GPU.mod0']
+mod0_cpu = data_log['Galaxy.getParamDerivatives.patch0']
+print('mod0 cpu:', mod0_cpu)
+print('mod0 gpu:', mod0_gpu.shape)
+
+cgood = mod0_cpu.patch
+ggood = mod0_gpu[0,:,:]
+
+cgood = cgood.copy()
+ggood = ggood.copy()
+cgood[cgood == 0] = np.nan
+ggood[ggood == 0] = np.nan
+i,j = np.nonzero(np.isfinite(cgood))
+i0 = min(i)
+i1 = max(i)
+j0 = min(j)
+j1 = max(j)
+cgood = cgood[i0:i1+1, j0:j1+1]
+print('CPU mod0: good range x', j0, j1, 'y', i0, i1)
+i,j = np.nonzero(np.isfinite(ggood))
+gi0 = min(i)
+gi1 = max(i)
+gj0 = min(j)
+gj1 = max(j)
+ggood = ggood[gi0:gi1+1, gj0:gj1+1]
+print('GPU mod0: good range x', gj0, gj1, 'y', gi0, gi1)
+
+# HACK -- align on the brightest pixel
+ci,cj = np.unravel_index(np.argmax(cgood), cgood.shape)
+ch,cw = cgood.shape
+i,j = np.unravel_index(np.argmax(ggood), ggood.shape)
+slc = slice(i-ci, i-ci+ch), slice(j-cj, j-cj+cw)
+ggood = ggood[slc]
+
+plt.clf()
+plt.subplot(1,3,1)
+plt.imshow(cgood, interpolation='nearest', origin='lower')
+plt.title('CPU mod0')
+plt.colorbar()
+plt.subplot(1,3,2)
+plt.imshow(ggood, interpolation='nearest', origin='lower')
+plt.title('GPU mod0')
+plt.colorbar()
+plt.subplot(1,3,3)
+if cgood.shape == ggood.shape:
+    diff = cgood - ggood
+    mx = max(np.abs(diff[np.isfinite(diff)]))
+    print('max diff:', mx)
+    plt.imshow(diff, interpolation='nearest', origin='lower', vmin=-mx, vmax=mx)
+    plt.colorbar()
+    plt.title('CPU - GPU')
+plt.savefig('mod0.png')
 
 print('A matrix:')
 c = fitsio.read('cpu-a-scaled.fits')
