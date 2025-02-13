@@ -21,6 +21,15 @@ tr.modelMasks = [tr.modelMasks[0]]
 # image is z band -- cut source to just z brightness
 src.brightness = NanoMaggies(z=src.brightness.z)
 
+case = 2
+
+if case == 1:
+    pass
+elif case == 2:
+    # increase the galaxy size so that MoGs are engaged
+    src.shape.setParams([3.])
+
+
 print('Source:', src)
 
 opt = tr.optimizer
@@ -58,12 +67,12 @@ gj1 = max(j)
 ggood = ggood[gi0:gi1+1, gj0:gj1+1]
 print('GPU mod0: good range x', gj0, gj1, 'y', gi0, gi1)
 
-# HACK -- align on the brightest pixel
-ci,cj = np.unravel_index(np.argmax(cgood), cgood.shape)
-ch,cw = cgood.shape
-i,j = np.unravel_index(np.argmax(ggood), ggood.shape)
-slc = slice(i-ci, i-ci+ch), slice(j-cj, j-cj+cw)
-ggood = ggood[slc]
+# # HACK -- align on the brightest pixel
+# ci,cj = np.unravel_index(np.argmax(cgood), cgood.shape)
+# ch,cw = cgood.shape
+# i,j = np.unravel_index(np.argmax(ggood), ggood.shape)
+# slc = slice(i-ci, i-ci+ch), slice(j-cj, j-cj+cw)
+# ggood = ggood[slc]
 
 plt.clf()
 plt.subplot(1,3,1)
