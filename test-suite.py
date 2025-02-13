@@ -12,11 +12,14 @@ tr.model_kwargs = {}
 print('Got', tr)
 tim = tr.images[0]
 print('Image:', tim)
+print('Full image shape:', tim.shape)
 
 tr.images = [tim]
 src = tr.catalog[0]
 tr.modelMasks = [tr.modelMasks[0]]
 #print('modelMasks:', tr.modelMasks)
+
+print('ModelMask for source:', tr.modelMasks[0][src])
 
 # image is z band -- cut source to just z brightness
 src.brightness = NanoMaggies(z=src.brightness.z)
@@ -31,6 +34,25 @@ elif case == 2:
 
 
 print('Source:', src)
+
+
+mm = tr.modelMasks[0][src]
+th,tw = tim.shape
+
+plt.clf()
+plt.subplot(1,2,1)
+plt.imshow(tim.getImage(), extent=(0,tw,0,th), interpolation='nearest', origin='lower')
+plt.plot([mm.x0, mm.x1, mm.x1, mm.x0, mm.x0],
+         [mm.y0, mm.y0, mm.y1, mm.y1, mm.y0], 'r-', lw=1)
+plt.title('image')
+plt.subplot(1,2,2)
+plt.imshow(tim.getInvError(), extent=(0,tw,0,th), interpolation='nearest', origin='lower')
+plt.plot([mm.x0, mm.x1, mm.x1, mm.x0, mm.x0],
+         [mm.y0, mm.y0, mm.y1, mm.y1, mm.y0], 'r-', lw=1)
+plt.title('ie')
+plt.suptitle('model mask')
+plt.savefig('mm.png')
+
 
 opt = tr.optimizer
 from astrometry.util.plotutils import PlotSequence
